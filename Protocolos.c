@@ -26,6 +26,17 @@
 #define BAUD_RATE 115200
 #define I2C_PORT i2c0
 
+// Variáveis globais
+static volatile uint32_t last_time = 0; // Armazena o tempo do último evento (em microssegundos)
+struct pixel_t
+{
+  uint8_t G, R, B; // Três valores de 8-bits compõem um pixel RGB.
+};
+typedef struct pixel_t npLED_t; //Definindo a struct pixel_t como um tipo "npLED_t" para abstrair complexidade
+npLED_t leds[LED_COUNT]; // buffer de pixels que formam a matriz.
+PIO np_pio; // Variáveis para uso da máquina PIO.
+uint sm;
+
 // Protótipos das Funções
 void init();
 void npInit(uint);
@@ -45,20 +56,6 @@ void NUMBER_7();
 void NUMBER_8();
 void NUMBER_9();
 static void gpio_irq_handler(uint gpio, uint32_t events);
-
-// Definição de pixel GRB
-struct pixel_t
-{
-  uint8_t G, R, B; // Três valores de 8-bits compõem um pixel.
-};
-typedef struct pixel_t npLED_t;
-
-// buffer de pixels que formam a matriz.
-npLED_t leds[LED_COUNT];
-
-// Variáveis para uso da máquina PIO.
-PIO np_pio;
-uint sm;
 
 int main()
 {
@@ -166,5 +163,26 @@ void npWrite()
     pio_sm_put_blocking(np_pio, sm, leds[i].G);
     pio_sm_put_blocking(np_pio, sm, leds[i].R);
     pio_sm_put_blocking(np_pio, sm, leds[i].B);
+  }
+}
+static void gpio_irq_handler(uint gpio, uint32_t events){
+    // Configura a ação ao apertar o botão e implementa o Debouce
+
+  // Obtém o tempo atual em microssegundos
+  uint32_t current_time = to_us_since_boot(get_absolute_time());
+
+  // Verifica se passou tempo suficiente desde o último evento
+  if (current_time - last_time > 200000) // 200 ms de debouncing
+  {
+    last_time = current_time; // Atualiza o tempo do último evento
+    // Código Função:
+    if (gpio == BUTTON_A_PIN)
+    {
+      // Código da função ao apertar B
+    }
+    else if (gpio == BUTTON_B_PIN)
+    {
+      // Código da função ao apertar B
+    }
   }
 }
