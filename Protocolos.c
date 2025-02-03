@@ -26,11 +26,50 @@
 #define BAUD_RATE 115200
 #define I2C_PORT i2c0
 
+//Protótipos das Funções
+void init();
+void npInit(uint);
+void npSetLED(const uint, const uint8_t, const uint8_t, const uint8_t);
+void npClear();
+void npWrite();
+void show_number();
+void blink();
+void NUMBER_0();
+void NUMBER_1();
+void NUMBER_2();
+void NUMBER_3();
+void NUMBER_4();
+void NUMBER_5();
+void NUMBER_6();
+void NUMBER_7();
+void NUMBER_8();
+void NUMBER_9();
+static void gpio_irq_handler(uint gpio, uint32_t events);
+
 int main()
 {
-    
+    stdio_init_all();
+    init();
     while (true) {
         printf("Hello, world!\n");
         sleep_ms(1000);
     }
 }
+
+void init(){
+
+    //inicializa a comunicação I2C
+    i2c_init(I2C_PORT, 100 * 1000);
+    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_SDA);
+    gpio_pull_up(I2C_SCL);
+
+    //Inicializa a comunicação Uart
+    uart_init(UART_ID, BAUD_RATE);
+    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
+    
+}
+    
+    
