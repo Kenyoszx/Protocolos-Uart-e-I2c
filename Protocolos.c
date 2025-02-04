@@ -46,7 +46,6 @@ void npSetLED(const uint, const uint8_t, const uint8_t, const uint8_t);
 void npClear();
 void npWrite();
 void show_number();
-void blink();
 void NUMBER_0();
 void NUMBER_1();
 void NUMBER_2();
@@ -207,4 +206,160 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
                 uart_puts(uart0,"Led Azul desligado\n");    
         }
     }
+}
+void NUMBER_0()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(6, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_1()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(7, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(17, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_2()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(6, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_3()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_4()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_5()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_6()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(6, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_7()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_8()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(6, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
+}
+void NUMBER_9()
+{
+  npClear();
+  npSetLED(1, 50, 50, 0);
+  npSetLED(2, 50, 50, 0);
+  npSetLED(3, 50, 50, 0);
+  npSetLED(8, 50, 50, 0);
+  npSetLED(11, 50, 50, 0);
+  npSetLED(12, 50, 50, 0);
+  npSetLED(13, 50, 50, 0);
+  npSetLED(16, 50, 50, 0);
+  npSetLED(18, 50, 50, 0);
+  npSetLED(21, 50, 50, 0);
+  npSetLED(22, 50, 50, 0);
+  npSetLED(23, 50, 50, 0);
+  npWrite();
 }
