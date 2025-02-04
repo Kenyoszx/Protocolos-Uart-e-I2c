@@ -28,13 +28,15 @@
 
 // Variáveis globais
 static volatile uint32_t last_time = 0; // Armazena o tempo do último evento (em microssegundos)
+static volatile bool ledgreen_active = false;
+static volatile bool ledblue_active = false;
 struct pixel_t
 {
-  uint8_t G, R, B; // Três valores de 8-bits compõem um pixel RGB.
+    uint8_t G, R, B; // Três valores de 8-bits compõem um pixel RGB.
 };
-typedef struct pixel_t npLED_t; //Definindo a struct pixel_t como um tipo "npLED_t" para abstrair complexidade
-npLED_t leds[LED_COUNT]; // buffer de pixels que formam a matriz.
-PIO np_pio; // Variáveis para uso da máquina PIO.
+typedef struct pixel_t npLED_t; // Definindo a struct pixel_t como um tipo "npLED_t" para abstrair complexidade
+npLED_t leds[LED_COUNT];        // buffer de pixels que formam a matriz.
+PIO np_pio;                     // Variáveis para uso da máquina PIO.
 uint sm;
 
 // Protótipos das Funções
@@ -98,7 +100,7 @@ void init()
     gpio_set_dir(BUTTON_B_PIN, GPIO_IN);
     gpio_pull_up(BUTTON_B_PIN);
     gpio_set_irq_enabled_with_callback(BUTTON_B_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // Rotina de Interrupção
-    
+
     // inicializa a comunicação I2C
     i2c_init(I2C_PORT, 100 * 1000);
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
@@ -113,76 +115,96 @@ void init()
 }
 void npInit(uint pin)
 {
-  // Inicializa a máquina PIO para controle da matriz de LEDs.
+    // Inicializa a máquina PIO para controle da matriz de LEDs.
 
-  // Cria programa PIO.
-  uint offset = pio_add_program(pio0, &ws2818b_program);
-  np_pio = pio0;
+    // Cria programa PIO.
+    uint offset = pio_add_program(pio0, &ws2818b_program);
+    np_pio = pio0;
 
-  // Toma posse de uma máquina PIO.
-  sm = pio_claim_unused_sm(np_pio, false);
-  if (sm < 0)
-  {
-    np_pio = pio1;
-    sm = pio_claim_unused_sm(np_pio, true); // Se nenhuma máquina estiver livre, panic!
-  }
+    // Toma posse de uma máquina PIO.
+    sm = pio_claim_unused_sm(np_pio, false);
+    if (sm < 0)
+    {
+        np_pio = pio1;
+        sm = pio_claim_unused_sm(np_pio, true); // Se nenhuma máquina estiver livre, panic!
+    }
 
-  // Inicia programa na máquina PIO obtida.
-  ws2818b_program_init(np_pio, sm, offset, pin, 800000.f);
+    // Inicia programa na máquina PIO obtida.
+    ws2818b_program_init(np_pio, sm, offset, pin, 800000.f);
 
-  // Limpa buffer de pixels.
-  for (uint i = 0; i < LED_COUNT; ++i)
-  {
-    leds[i].R = 0;
-    leds[i].G = 0;
-    leds[i].B = 0;
-  }
+    // Limpa buffer de pixels.
+    for (uint i = 0; i < LED_COUNT; ++i)
+    {
+        leds[i].R = 0;
+        leds[i].G = 0;
+        leds[i].B = 0;
+    }
 }
 void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b)
 {
-  // Atribui uma cor RGB a um LED.
+    // Atribui uma cor RGB a um LED.
 
-  leds[index].R = r;
-  leds[index].G = g;
-  leds[index].B = b;
+    leds[index].R = r;
+    leds[index].G = g;
+    leds[index].B = b;
 }
 void npClear()
 {
-  // Limpa o buffer de pixels.
+    // Limpa o buffer de pixels.
 
-  for (uint i = 0; i < LED_COUNT; ++i)
-    npSetLED(i, 0, 0, 0);
+    for (uint i = 0; i < LED_COUNT; ++i)
+        npSetLED(i, 0, 0, 0);
 }
 void npWrite()
 {
-  // Escreve os dados do buffer nos LEDs.
+    // Escreve os dados do buffer nos LEDs.
 
-  // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
-  for (uint i = 0; i < LED_COUNT; ++i)
-  {
-    pio_sm_put_blocking(np_pio, sm, leds[i].G);
-    pio_sm_put_blocking(np_pio, sm, leds[i].R);
-    pio_sm_put_blocking(np_pio, sm, leds[i].B);
-  }
+    // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
+    for (uint i = 0; i < LED_COUNT; ++i)
+    {
+        pio_sm_put_blocking(np_pio, sm, leds[i].G);
+        pio_sm_put_blocking(np_pio, sm, leds[i].R);
+        pio_sm_put_blocking(np_pio, sm, leds[i].B);
+    }
 }
-static void gpio_irq_handler(uint gpio, uint32_t events){
+static void gpio_irq_handler(uint gpio, uint32_t events)
+{
     // Configura a ação ao apertar o botão e implementa o Debouce
 
-  // Obtém o tempo atual em microssegundos
-  uint32_t current_time = to_us_since_boot(get_absolute_time());
+    // Obtém o tempo atual em microssegundos
+    uint32_t current_time = to_us_since_boot(get_absolute_time());
 
-  // Verifica se passou tempo suficiente desde o último evento
-  if (current_time - last_time > 200000) // 200 ms de debouncing
-  {
-    last_time = current_time; // Atualiza o tempo do último evento
-    // Código Função:
-    if (gpio == BUTTON_A_PIN)
+    // Verifica se passou tempo suficiente desde o último evento
+    if (current_time - last_time > 200000) // 200 ms de debouncing
     {
-      // Código da função ao apertar B
+        last_time = current_time; // Atualiza o tempo do último evento
+        // Código Função:
+        if (gpio == BUTTON_A_PIN)
+        {
+            /*Pressionar o botão A deve alternar o estado do LED RGB Verde (ligado/desligado).
+            o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
+            SSD1306*/
+            ledgreen_active = !ledgreen_active;
+            gpio_put(LED_PIN_GREEN,ledgreen_active);
+            uart_puts(uart0,"Button A foi pressionado ");
+            if (ledgreen_active)   
+                uart_puts(uart0,"Led verde ligado");
+            else 
+                uart_puts(uart0,"Led verde desligado");    
+            
+        }
+        else if (gpio == BUTTON_B_PIN)
+        {
+           /*Pressionar o botão A deve alternar o estado do LED RGB Azul (ligado/desligado).
+            o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
+            SSD1306*/
+            ledblue_active = !ledblue_active;
+            gpio_put(LED_PIN_GREEN,ledblue_active);
+            uart_puts(uart0,"Button B foi pressionado: ");
+            if (ledblue_active)   
+                uart_puts(uart0,"Led Azul ligado\n");
+            else 
+                uart_puts(uart0,"Led Azul desligado\n");    
+        }
     }
-    else if (gpio == BUTTON_B_PIN)
-    {
-      // Código da função ao apertar B
-    }
-  }
 }
