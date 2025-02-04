@@ -28,8 +28,8 @@
 
 // Variáveis globais
 static volatile uint32_t last_time = 0; // Armazena o tempo do último evento (em microssegundos)
-static volatile bool ledgreen_active = false;
-static volatile bool ledblue_active = false;
+static volatile bool ledgreen_active = false, ledblue_active = false;
+static volatile char caracter;
 struct pixel_t
 {
     uint8_t G, R, B; // Três valores de 8-bits compõem um pixel RGB.
@@ -64,8 +64,45 @@ int main()
     init();
     while (true)
     {
-        printf("Hello, world!\n");
-        sleep_ms(1000);
+        caracter = uart_getc(uart0);
+        switch (caracter)
+        {
+        case '0':
+            NUMBER_0();
+            break;
+        case '1':
+            NUMBER_1();
+            break;
+        case '2':
+            NUMBER_2();
+            break;
+        case '3':
+            NUMBER_3();
+            break;
+        case '4':
+            NUMBER_4();
+            break;
+        case '5':
+            NUMBER_5();
+            break;
+        case '6':
+            NUMBER_6();
+            break;
+        case '7':
+            NUMBER_7();
+            break;
+        case '8':
+            NUMBER_8();
+            break;
+        case '9':
+            NUMBER_9();
+            break;
+        default:
+            // função para escrever no display
+            npClear();
+            npWrite();
+            break;
+        }
     }
 }
 
@@ -184,182 +221,181 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
             o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
             SSD1306*/
             ledgreen_active = !ledgreen_active;
-            gpio_put(LED_PIN_GREEN,ledgreen_active);
-            uart_puts(uart0,"Button A foi pressionado ");
-            if (ledgreen_active)   
-                uart_puts(uart0,"Led verde ligado");
-            else 
-                uart_puts(uart0,"Led verde desligado");    
-            
+            gpio_put(LED_PIN_GREEN, ledgreen_active);
+            uart_puts(uart0, "Button A foi pressionado ");
+            if (ledgreen_active)
+                uart_puts(uart0, "Led verde ligado");
+            else
+                uart_puts(uart0, "Led verde desligado");
         }
         else if (gpio == BUTTON_B_PIN)
         {
-           /*Pressionar o botão A deve alternar o estado do LED RGB Azul (ligado/desligado).
-            o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
-            SSD1306*/
+            /*Pressionar o botão A deve alternar o estado do LED RGB Azul (ligado/desligado).
+             o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
+             SSD1306*/
             ledblue_active = !ledblue_active;
-            gpio_put(LED_PIN_GREEN,ledblue_active);
-            uart_puts(uart0,"Button B foi pressionado: ");
-            if (ledblue_active)   
-                uart_puts(uart0,"Led Azul ligado\n");
-            else 
-                uart_puts(uart0,"Led Azul desligado\n");    
+            gpio_put(LED_PIN_GREEN, ledblue_active);
+            uart_puts(uart0, "Button B foi pressionado: ");
+            if (ledblue_active)
+                uart_puts(uart0, "Led Azul ligado\n");
+            else
+                uart_puts(uart0, "Led Azul desligado\n");
         }
     }
 }
 void NUMBER_0()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(6, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(6, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_1()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(7, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(17, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(7, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(17, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_2()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(6, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(6, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_3()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_4()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_5()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_6()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(6, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(6, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_7()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_8()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(6, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(6, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
 void NUMBER_9()
 {
-  npClear();
-  npSetLED(1, 50, 50, 0);
-  npSetLED(2, 50, 50, 0);
-  npSetLED(3, 50, 50, 0);
-  npSetLED(8, 50, 50, 0);
-  npSetLED(11, 50, 50, 0);
-  npSetLED(12, 50, 50, 0);
-  npSetLED(13, 50, 50, 0);
-  npSetLED(16, 50, 50, 0);
-  npSetLED(18, 50, 50, 0);
-  npSetLED(21, 50, 50, 0);
-  npSetLED(22, 50, 50, 0);
-  npSetLED(23, 50, 50, 0);
-  npWrite();
+    npClear();
+    npSetLED(1, 50, 50, 0);
+    npSetLED(2, 50, 50, 0);
+    npSetLED(3, 50, 50, 0);
+    npSetLED(8, 50, 50, 0);
+    npSetLED(11, 50, 50, 0);
+    npSetLED(12, 50, 50, 0);
+    npSetLED(13, 50, 50, 0);
+    npSetLED(16, 50, 50, 0);
+    npSetLED(18, 50, 50, 0);
+    npSetLED(21, 50, 50, 0);
+    npSetLED(22, 50, 50, 0);
+    npSetLED(23, 50, 50, 0);
+    npWrite();
 }
