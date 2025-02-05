@@ -7,6 +7,8 @@
 #include "hardware/uart.h"
 #include "hardware/clocks.h"
 #include "ws2818b.pio.h"
+#include "inc/ssd1306.h"
+#include "inc/font.h"
 
 // Definição dos Pinos
 #define UART_TX_PIN 0
@@ -24,12 +26,14 @@
 #define LED_COUNT 25
 #define UART_ID uart0
 #define BAUD_RATE 115200
-#define I2C_PORT i2c0
+#define I2C_PORT i2c1
+#define ENDERECO 0x3C
 
 // Variáveis globais
 static volatile uint32_t last_time = 0; // Armazena o tempo do último evento (em microssegundos)
-static volatile bool ledgreen_active = false, ledblue_active = false;
+static volatile bool ledgreen_active = false, ledblue_active = false, cor = true;
 static volatile char caracter;
+ssd1306_t ssd;
 struct pixel_t
 {
     uint8_t G, R, B; // Três valores de 8-bits compõem um pixel RGB.
@@ -62,8 +66,16 @@ int main()
 {
     stdio_init_all();
     init();
+
     while (true)
     {
+        // Atualiza o conteúdo do display com animações
+        ssd1306_fill(&ssd, !cor);                          // Limpa o display
+        ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);      // Desenha um retângulo
+        ssd1306_draw_string(&ssd, "EU TE AMO", 25, 10);    // Desenha uma string
+        ssd1306_draw_string(&ssd, "BRUNA MORAES", 20, 30); // Desenha uma string
+        ssd1306_draw_string(&ssd, "CHATINHA", 30, 48);     // Desenha uma string
+        ssd1306_send_data(&ssd);                           // Atualiza o display
         caracter = uart_getc(uart0);
         switch (caracter)
         {
@@ -138,11 +150,19 @@ void init()
     gpio_set_irq_enabled_with_callback(BUTTON_B_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler); // Rotina de Interrupção
 
     // inicializa a comunicação I2C
-    i2c_init(I2C_PORT, 100 * 1000);
+    i2c_init(I2C_PORT, 400 * 1000);
+
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
+    ssd1306_init(&ssd, WIDTH, HEIGHT, false, ENDERECO, I2C_PORT); // Inicializa o display
+    ssd1306_config(&ssd);                                         // Configura o display
+    ssd1306_send_data(&ssd);                                      // Envia os dados para o display
+
+    // Limpa o display. O display inicia com todos os pixels apagados.
+    ssd1306_fill(&ssd, false);
+    ssd1306_send_data(&ssd);
 
     // Inicializa a comunicação Uart
     uart_init(UART_ID, BAUD_RATE);
@@ -217,29 +237,79 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
         // Código Função:
         if (gpio == BUTTON_A_PIN)
         {
-            /*Pressionar o botão A deve alternar o estado do LED RGB Verde (ligado/desligado).
-            o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
-            SSD1306*/
             ledgreen_active = !ledgreen_active;
             gpio_put(LED_PIN_GREEN, ledgreen_active);
             uart_puts(uart0, "Button A foi pressionado ");
-            if (ledgreen_active)
+
+            // Atualiza o conteúdo do display com mensagem informando estado do led
+            ssd1306_fill(&ssd, !cor);                     // Limpa o display
+            ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor); // Desenha um retângulo
+            ssd1306_send_data(&ssd);                      // Atualiza o display
+
+            if (ledblue_active && ledgreen_active)
+            {
+                ssd1306_fill(&ssd, !cor);                           // Limpa o display
+                ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
+                ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
+                ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
+                ssd1306_draw_string(&ssd, "LIGADOS", 35, 48);       // Desenha uma string
+                ssd1306_send_data(&ssd);                            // Atualiza o display
+                return;
+            }
+            else if (ledgreen_active)
+            {
                 uart_puts(uart0, "Led verde ligado");
+                ssd1306_draw_string(&ssd, "LED VERDE", 30, 10);  // Desenha uma string
+                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
+                ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
+                ssd1306_send_data(&ssd);                         // Atualiza o display
+            }
             else
+            {
                 uart_puts(uart0, "Led verde desligado");
+                ssd1306_draw_string(&ssd, "LED VERDE", 30, 10);  // Desenha uma string
+                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
+                ssd1306_draw_string(&ssd, "APAGADO", 30, 48);    // Desenha uma string
+                ssd1306_send_data(&ssd);                         // Atualiza o display
+            }
         }
         else if (gpio == BUTTON_B_PIN)
         {
-            /*Pressionar o botão A deve alternar o estado do LED RGB Azul (ligado/desligado).
-             o Uma mensagem informativa sobre o estado do LED deve ser exibida no display
-             SSD1306*/
             ledblue_active = !ledblue_active;
-            gpio_put(LED_PIN_GREEN, ledblue_active);
+            gpio_put(LED_PIN_BLUE, ledblue_active);
             uart_puts(uart0, "Button B foi pressionado: ");
-            if (ledblue_active)
-                uart_puts(uart0, "Led Azul ligado\n");
+
+            // Atualiza o conteúdo do display com mensagem informando estado do led
+            ssd1306_fill(&ssd, !cor);                     // Limpa o display
+            ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor); // Desenha um retângulo
+            ssd1306_send_data(&ssd);                      // Atualiza o display
+
+            if (ledblue_active && ledgreen_active)
+            {
+                ssd1306_fill(&ssd, !cor);                           // Limpa o display
+                ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
+                ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
+                ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
+                ssd1306_draw_string(&ssd, "LIGADOS", 35, 48);       // Desenha uma string
+                ssd1306_send_data(&ssd);                            // Atualiza o display
+                return;
+            }
+            else if (ledblue_active)
+            {
+                uart_puts(uart0, "Led azul ligado");
+                ssd1306_draw_string(&ssd, "LED AZUL", 30, 10);  // Desenha uma string
+                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
+                ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
+                ssd1306_send_data(&ssd);                         // Atualiza o display
+            }
             else
-                uart_puts(uart0, "Led Azul desligado\n");
+            {
+                uart_puts(uart0, "Led azul desligado");
+                ssd1306_draw_string(&ssd, "LED AZUL", 30, 10);  // Desenha uma string
+                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
+                ssd1306_draw_string(&ssd, "APAGADO", 30, 48);    // Desenha uma string
+                ssd1306_send_data(&ssd);                         // Atualiza o display
+            }
         }
     }
 }

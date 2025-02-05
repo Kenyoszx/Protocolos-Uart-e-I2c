@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Protocolos Protocolos.c )
+add_executable(Protocolos Protocolos.c inc/ssd1306.c)
 
 pico_set_program_name(Protocolos "Protocolos")
 pico_set_program_version(Protocolos "0.1")
