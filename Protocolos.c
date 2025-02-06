@@ -49,7 +49,8 @@ void npInit(uint);
 void npSetLED(const uint, const uint8_t, const uint8_t, const uint8_t);
 void npClear();
 void npWrite();
-void show_number();
+void display_state();
+void showNumber();
 void NUMBER_0();
 void NUMBER_1();
 void NUMBER_2();
@@ -69,51 +70,12 @@ int main()
 
     while (true)
     {
-        // Atualiza o conteúdo do display com animações
-        ssd1306_fill(&ssd, !cor);                          // Limpa o display
-        ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);      // Desenha um retângulo
-        ssd1306_draw_string(&ssd, "EU TE AMO", 25, 10);    // Desenha uma string
-        ssd1306_draw_string(&ssd, "BRUNA MORAES", 20, 30); // Desenha uma string
-        ssd1306_draw_string(&ssd, "CHATINHA", 30, 48);     // Desenha uma string
-        ssd1306_send_data(&ssd);                           // Atualiza o display
-        caracter = uart_getc(uart0);
-        switch (caracter)
+        if (stdio_usb_connected())
         {
-        case '0':
-            NUMBER_0();
-            break;
-        case '1':
-            NUMBER_1();
-            break;
-        case '2':
-            NUMBER_2();
-            break;
-        case '3':
-            NUMBER_3();
-            break;
-        case '4':
-            NUMBER_4();
-            break;
-        case '5':
-            NUMBER_5();
-            break;
-        case '6':
-            NUMBER_6();
-            break;
-        case '7':
-            NUMBER_7();
-            break;
-        case '8':
-            NUMBER_8();
-            break;
-        case '9':
-            NUMBER_9();
-            break;
-        default:
-            // função para escrever no display
-            npClear();
-            npWrite();
-            break;
+            if (scanf("%c", &caracter) == 1){
+                printf("Recebido: '%c'\n", caracter);
+                showNumber();
+            }
         }
     }
 }
@@ -242,36 +204,7 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
             uart_puts(uart0, "Button A foi pressionado ");
 
             // Atualiza o conteúdo do display com mensagem informando estado do led
-            ssd1306_fill(&ssd, !cor);                     // Limpa o display
-            ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor); // Desenha um retângulo
-            ssd1306_send_data(&ssd);                      // Atualiza o display
-
-            if (ledblue_active && ledgreen_active)
-            {
-                ssd1306_fill(&ssd, !cor);                           // Limpa o display
-                ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
-                ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
-                ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
-                ssd1306_draw_string(&ssd, "LIGADOS", 35, 48);       // Desenha uma string
-                ssd1306_send_data(&ssd);                            // Atualiza o display
-                return;
-            }
-            else if (ledgreen_active)
-            {
-                uart_puts(uart0, "Led verde ligado");
-                ssd1306_draw_string(&ssd, "LED VERDE", 30, 10);  // Desenha uma string
-                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
-                ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
-                ssd1306_send_data(&ssd);                         // Atualiza o display
-            }
-            else
-            {
-                uart_puts(uart0, "Led verde desligado");
-                ssd1306_draw_string(&ssd, "LED VERDE", 30, 10);  // Desenha uma string
-                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
-                ssd1306_draw_string(&ssd, "APAGADO", 30, 48);    // Desenha uma string
-                ssd1306_send_data(&ssd);                         // Atualiza o display
-            }
+            display_state();
         }
         else if (gpio == BUTTON_B_PIN)
         {
@@ -280,36 +213,7 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
             uart_puts(uart0, "Button B foi pressionado: ");
 
             // Atualiza o conteúdo do display com mensagem informando estado do led
-            ssd1306_fill(&ssd, !cor);                     // Limpa o display
-            ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor); // Desenha um retângulo
-            ssd1306_send_data(&ssd);                      // Atualiza o display
-
-            if (ledblue_active && ledgreen_active)
-            {
-                ssd1306_fill(&ssd, !cor);                           // Limpa o display
-                ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
-                ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
-                ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
-                ssd1306_draw_string(&ssd, "LIGADOS", 35, 48);       // Desenha uma string
-                ssd1306_send_data(&ssd);                            // Atualiza o display
-                return;
-            }
-            else if (ledblue_active)
-            {
-                uart_puts(uart0, "Led azul ligado");
-                ssd1306_draw_string(&ssd, "LED AZUL", 30, 10);  // Desenha uma string
-                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
-                ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
-                ssd1306_send_data(&ssd);                         // Atualiza o display
-            }
-            else
-            {
-                uart_puts(uart0, "Led azul desligado");
-                ssd1306_draw_string(&ssd, "LED AZUL", 30, 10);  // Desenha uma string
-                ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
-                ssd1306_draw_string(&ssd, "APAGADO", 30, 48);    // Desenha uma string
-                ssd1306_send_data(&ssd);                         // Atualiza o display
-            }
+            display_state();
         }
     }
 }
@@ -468,4 +372,88 @@ void NUMBER_9()
     npSetLED(22, 50, 50, 0);
     npSetLED(23, 50, 50, 0);
     npWrite();
+}
+void display_state()
+{
+    ssd1306_fill(&ssd, !cor);                     // Limpa o display
+    ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor); // Desenha um retângulo
+    ssd1306_send_data(&ssd);                      // Atualiza o display
+    if (ledblue_active && ledgreen_active)
+    {
+        uart_puts(uart0, "Ambos os leds Ligados\n");
+        ssd1306_fill(&ssd, !cor);                           // Limpa o display
+        ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
+        ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
+        ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
+        ssd1306_draw_string(&ssd, "LIGADOS", 35, 48);       // Desenha uma string
+        ssd1306_send_data(&ssd);                            // Atualiza o display
+        return;
+    }
+    else if (ledblue_active)
+    {
+        uart_puts(uart0, "Led azul ligado\n");
+        ssd1306_draw_string(&ssd, "LED AZUL", 30, 10);   // Desenha uma string
+        ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
+        ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
+        ssd1306_send_data(&ssd);                         // Atualiza o display
+    }
+    else if (ledgreen_active)
+    {
+        uart_puts(uart0, "Led verde ligado\n");
+        ssd1306_draw_string(&ssd, "LED VERDE", 30, 10);  // Desenha uma string
+        ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
+        ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
+        ssd1306_send_data(&ssd);                         // Atualiza o display
+    }
+    else
+    {
+        uart_puts(uart0, "Ambos os leds Apagados\n");
+        ssd1306_fill(&ssd, !cor);                           // Limpa o display
+        ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
+        ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
+        ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
+        ssd1306_draw_string(&ssd, "APAGADOS", 35, 48);      // Desenha uma string
+        ssd1306_send_data(&ssd);                            // Atualiza o display
+        return;
+    }
+}
+void showNumber(){
+switch (caracter)
+        {
+        case '0':
+            NUMBER_0();
+            break;
+        case '1':
+            NUMBER_1();
+            break;
+        case '2':
+            NUMBER_2();
+            break;
+        case '3':
+            NUMBER_3();
+            break;
+        case '4':
+            NUMBER_4();
+            break;
+        case '5':
+            NUMBER_5();
+            break;
+        case '6':
+            NUMBER_6();
+            break;
+        case '7':
+            NUMBER_7();
+            break;
+        case '8':
+            NUMBER_8();
+            break;
+        case '9':
+            NUMBER_9();
+            break;
+        default:
+            // função para escrever no display
+            npClear();
+            npWrite();
+            break;
+        }
 }
