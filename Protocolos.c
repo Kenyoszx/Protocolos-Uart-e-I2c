@@ -65,16 +65,17 @@ static void gpio_irq_handler(uint gpio, uint32_t events);
 
 int main()
 {
-    stdio_init_all();
-    init();
+    stdio_init_all(); // inicializa a entrada e saída padrão
+    init(); // inicializa os pinos
 
     while (true)
     {
-        if (stdio_usb_connected())
+        if (stdio_usb_connected()) // verifica se o microcontrolador está conectado
         {
+            //recebe um caracter via serial monitor
             if (scanf("%c", &caracter) == 1){
-                printf("Recebido: '%c'\n", caracter);
-                showNumber();
+                printf("Recebido: '%c'\n", caracter); // Informa o Caracter recebido no serial monitor
+                showNumber();  // caso seja um número representa na matriz de leds 5x5
             }
         }
     }
@@ -193,32 +194,36 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
     uint32_t current_time = to_us_since_boot(get_absolute_time());
 
     // Verifica se passou tempo suficiente desde o último evento
-    if (current_time - last_time > 200000) // 200 ms de debouncing
+    if (current_time - last_time > 50000) // 50 ms de debouncing
     {
         last_time = current_time; // Atualiza o tempo do último evento
         // Código Função:
         if (gpio == BUTTON_A_PIN)
         {
+            //Troca o estado do LED e informa no Serial Monitor que o Botão A foi pressionado
             ledgreen_active = !ledgreen_active;
             gpio_put(LED_PIN_GREEN, ledgreen_active);
             printf("Button A foi pressionado: ");
 
-            // Atualiza o conteúdo do display com mensagem informando estado do led
+            // Atualiza o conteúdo do display e do Serial monitor com mensagem informando estado do led
             display_state();
         }
         else if (gpio == BUTTON_B_PIN)
         {
+            //Troca o estado do LED e informa no Serial Monitor que o Botão B foi pressionado
             ledblue_active = !ledblue_active;
             gpio_put(LED_PIN_BLUE, ledblue_active);
             printf("Button B foi pressionado: ");
 
-            // Atualiza o conteúdo do display com mensagem informando estado do led
+            // Atualiza o conteúdo do displaye do Serial monitor com mensagem informando estado do led
             display_state();
         }
     }
 }
 void NUMBER_0()
 {
+    //Representa o Número 0 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -236,6 +241,8 @@ void NUMBER_0()
 }
 void NUMBER_1()
 {
+    //Representa o Número 1 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -249,6 +256,8 @@ void NUMBER_1()
 }
 void NUMBER_2()
 {
+    //Representa o Número 2 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -265,6 +274,8 @@ void NUMBER_2()
 }
 void NUMBER_3()
 {
+    //Representa o Número 3 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -281,6 +292,8 @@ void NUMBER_3()
 }
 void NUMBER_4()
 {
+    //Representa o Número 4 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(8, 50, 50, 0);
@@ -295,6 +308,8 @@ void NUMBER_4()
 }
 void NUMBER_5()
 {
+    //Representa o Número 5 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -311,6 +326,8 @@ void NUMBER_5()
 }
 void NUMBER_6()
 {
+    //Representa o Número 6 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -328,6 +345,8 @@ void NUMBER_6()
 }
 void NUMBER_7()
 {
+    //Representa o Número 7 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(8, 50, 50, 0);
@@ -340,6 +359,8 @@ void NUMBER_7()
 }
 void NUMBER_8()
 {
+    //Representa o Número 8 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -358,6 +379,8 @@ void NUMBER_8()
 }
 void NUMBER_9()
 {
+    //Representa o Número 9 Na Matriz 5x5
+
     npClear();
     npSetLED(1, 50, 50, 0);
     npSetLED(2, 50, 50, 0);
@@ -375,6 +398,8 @@ void NUMBER_9()
 }
 void display_state()
 {
+    //Atualiza o Display e a UART de Acordo com o estado do(s) LED(s) 
+
     ssd1306_fill(&ssd, !cor);                     // Limpa o display
     ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor); // Desenha um retângulo
     ssd1306_send_data(&ssd);                      // Atualiza o display
@@ -418,6 +443,9 @@ void display_state()
     }
 }
 void showNumber(){
+    //Caso Seja recebido um número pela UART representa ele na matriz de leds
+    //Do contrário apaga a Matriz de LEDs
+
 switch (caracter)
         {
         case '0':
@@ -451,7 +479,6 @@ switch (caracter)
             NUMBER_9();
             break;
         default:
-            // função para escrever no display
             npClear();
             npWrite();
             break;
