@@ -1,5 +1,5 @@
 
-// Fontes para A-Z e 0-9. Os caracteres tem 8x8 pixels
+// Fontes para os Caracteres Visíveis em ASCII. Os caracteres tem 8x8 pixels
 
 static uint8_t font[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Space 0x20
