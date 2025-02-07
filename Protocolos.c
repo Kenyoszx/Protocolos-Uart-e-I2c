@@ -201,7 +201,7 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
         {
             ledgreen_active = !ledgreen_active;
             gpio_put(LED_PIN_GREEN, ledgreen_active);
-            uart_puts(uart0, "Button A foi pressionado ");
+            printf("Button A foi pressionado: ");
 
             // Atualiza o conteúdo do display com mensagem informando estado do led
             display_state();
@@ -210,7 +210,7 @@ static void gpio_irq_handler(uint gpio, uint32_t events)
         {
             ledblue_active = !ledblue_active;
             gpio_put(LED_PIN_BLUE, ledblue_active);
-            uart_puts(uart0, "Button B foi pressionado: ");
+            printf("Button B foi pressionado: ");
 
             // Atualiza o conteúdo do display com mensagem informando estado do led
             display_state();
@@ -380,39 +380,39 @@ void display_state()
     ssd1306_send_data(&ssd);                      // Atualiza o display
     if (ledblue_active && ledgreen_active)
     {
-        uart_puts(uart0, "Ambos os leds Ligados\n");
+        printf("Ambos os leds Ligados\n");
         ssd1306_fill(&ssd, !cor);                           // Limpa o display
         ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
-        ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
-        ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
-        ssd1306_draw_string(&ssd, "LIGADOS", 35, 48);       // Desenha uma string
+        ssd1306_draw_string(&ssd, "Ambos os LEDs", 15, 10); // Desenha uma string
+        ssd1306_draw_string(&ssd, "Agora Estao:", 20, 30);   // Desenha uma string
+        ssd1306_draw_string(&ssd, "Ligados", 35, 48);       // Desenha uma string
         ssd1306_send_data(&ssd);                            // Atualiza o display
         return;
     }
     else if (ledblue_active)
     {
-        uart_puts(uart0, "Led azul ligado\n");
-        ssd1306_draw_string(&ssd, "LED AZUL", 30, 10);   // Desenha uma string
-        ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
-        ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
+        printf("Led azul ligado\n");
+        ssd1306_draw_string(&ssd, "LED Azul", 30, 10);   // Desenha uma string
+        ssd1306_draw_string(&ssd, "Agora Esta:", 20, 30); // Desenha uma string
+        ssd1306_draw_string(&ssd, "Ligado", 35, 48);     // Desenha uma string
         ssd1306_send_data(&ssd);                         // Atualiza o display
     }
     else if (ledgreen_active)
     {
-        uart_puts(uart0, "Led verde ligado\n");
-        ssd1306_draw_string(&ssd, "LED VERDE", 30, 10);  // Desenha uma string
-        ssd1306_draw_string(&ssd, "AGORA ESTA", 20, 30); // Desenha uma string
-        ssd1306_draw_string(&ssd, "LIGADO", 35, 48);     // Desenha uma string
+        printf("Led verde ligado\n");
+        ssd1306_draw_string(&ssd, "LED Verde", 30, 10);  // Desenha uma string
+        ssd1306_draw_string(&ssd, "Agora Esta:", 20, 30); // Desenha uma string
+        ssd1306_draw_string(&ssd, "Ligado", 35, 48);     // Desenha uma string
         ssd1306_send_data(&ssd);                         // Atualiza o display
     }
     else
     {
-        uart_puts(uart0, "Ambos os leds Apagados\n");
+        printf("Ambos os leds Apagados\n");
         ssd1306_fill(&ssd, !cor);                           // Limpa o display
         ssd1306_rect(&ssd, 3, 3, 122, 58, cor, !cor);       // Desenha um retângulo
-        ssd1306_draw_string(&ssd, "AMBOS OS LEDS", 15, 10); // Desenha uma string
-        ssd1306_draw_string(&ssd, "AGORA ESTAO", 20, 30);   // Desenha uma string
-        ssd1306_draw_string(&ssd, "APAGADOS", 35, 48);      // Desenha uma string
+        ssd1306_draw_string(&ssd, "Ambos os LEDs", 15, 10); // Desenha uma string
+        ssd1306_draw_string(&ssd, "Agora Estao:", 20, 30);   // Desenha uma string
+        ssd1306_draw_string(&ssd, "Apagados", 35, 48);      // Desenha uma string
         ssd1306_send_data(&ssd);                            // Atualiza o display
         return;
     }
