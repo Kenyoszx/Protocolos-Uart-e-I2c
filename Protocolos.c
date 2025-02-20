@@ -75,6 +75,10 @@ int main()
             // recebe um caracter via serial monitor
             if (scanf("%c", &caracter) == 1)
             {
+                ssd1306_fill(&ssd,!cor);
+                ssd1306_draw_string(&ssd,"Recebido: ",16,30);
+                ssd1306_draw_char(&ssd,caracter,96,30);
+                ssd1306_send_data(&ssd);
                 printf("Recebido: '%c'\n", caracter); // Informa o Caracter recebido no serial monitor
                 showNumber();                         // caso seja um número representa na matriz de leds 5x5
             }
